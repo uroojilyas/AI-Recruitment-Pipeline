@@ -1,0 +1,514 @@
+{
+  "name": "AI Recruitment",
+  "nodes": [
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=\"You are an expert HR recruiter. Compare the following Resume against the Job Description provided.\n\nJob Description: {{ $('Load Job Requirements').item.json.job_description }}\n\nResume: {{ $json.text }}\n\nTask:\n\nGive a match score from 0 to 100.\n\nDetermine Status: If score is 70+, status is 'Shortlisted'. If below 70, status is 'Rejected'.\n\nProvide a concise 2-sentence explanation for the decision.\n\nOutput Instructions:\nReturn ONLY a raw JSON object. Do not include markdown formatting, backticks, or introductory text. Be extremely concise.\n\nResponse Format:\n{\n\"score\": number,\n\"status\": \"string\",\n\"reason\": \"string\"\n}\"",
+        "hasOutputParser": true,
+        "batching": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.9,
+      "position": [
+        -832,
+        -256
+      ],
+      "id": "636674a8-a758-4765-bbfa-4606c8c80362",
+      "name": "Basic LLM Chain"
+    },
+    {
+      "parameters": {
+        "formTitle": "Job Application Form",
+        "formDescription": "Please upload your details and CV.",
+        "formFields": {
+          "values": [
+            {
+              "fieldLabel": "Name",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Email",
+              "fieldType": "email",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Resume",
+              "fieldType": "file",
+              "requiredField": true
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.formTrigger",
+      "typeVersion": 2.5,
+      "position": [
+        -1376,
+        -256
+      ],
+      "id": "a2c8a26a-563b-42d8-91f5-8a81c86b03d9",
+      "name": "Candidate Submission Trigger",
+      "webhookId": "e96c6000-7832-413b-8015-b48322a05366"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "164ad640-40f6-4768-ab86-3707f3b57cdb",
+              "name": "job_description",
+              "value": "We are looking for a Python Developer with experience in n8n and AI.",
+              "type": "string"
+            }
+          ]
+        },
+        "includeOtherFields": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -1168,
+        -256
+      ],
+      "id": "ffc0d533-1a70-430f-ac5a-433ff4bb8865",
+      "name": "Load Job Requirements"
+    },
+    {
+      "parameters": {
+        "operation": "pdf",
+        "binaryPropertyName": "Resume",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.extractFromFile",
+      "typeVersion": 1.1,
+      "position": [
+        -976,
+        -256
+      ],
+      "id": "f606e7b4-7a94-40e0-be37-3d9eae2e6e93",
+      "name": "Parse PDF Resume"
+    },
+    {
+      "parameters": {
+        "operation": "create",
+        "base": {
+          "__rl": true,
+          "value": "appNlqbRh93I1pF4u",
+          "mode": "list",
+          "cachedResultName": "AI Recruitment",
+          "cachedResultUrl": "https://airtable.com/appNlqbRh93I1pF4u"
+        },
+        "table": {
+          "__rl": true,
+          "value": "tblAlaAwMZu44gNhP",
+          "mode": "list",
+          "cachedResultName": "Applicants",
+          "cachedResultUrl": "https://airtable.com/appNlqbRh93I1pF4u/tblAlaAwMZu44gNhP"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Name": "={{ $('Load Job Requirements').item.json.Name }}",
+            "Email": "={{ $('Load Job Requirements').item.json.Email }}",
+            "Resume Text": "={{ $('Parse PDF Resume').item.json.text }}",
+            "Job Description": "={{ $('Load Job Requirements').item.json.job_description }}",
+            "Status": "={{ $json.status }}",
+            "AI Score": "={{ $json.score }}",
+            "Reason": "={{ $json.reason }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "Name",
+              "displayName": "Name",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Email",
+              "displayName": "Email",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Job Description",
+              "displayName": "Job Description",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Resume Text",
+              "displayName": "Resume Text",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "AI Score",
+              "displayName": "AI Score",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "number",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Status",
+              "displayName": "Status",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "options",
+              "options": [
+                {
+                  "name": "Pending",
+                  "value": "Pending"
+                },
+                {
+                  "name": "Rejected",
+                  "value": "Rejected"
+                },
+                {
+                  "name": "Shortlisted",
+                  "value": "Shortlisted"
+                }
+              ],
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Reason",
+              "displayName": "Reason",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.2,
+      "position": [
+        -384,
+        -256
+      ],
+      "id": "f655e801-64f7-4e81-8c32-9b9aa191cd58",
+      "name": "Log Application to Airtable",
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "fdbGRH7DmEjJ7WR1",
+          "name": "Airtable Personal Access Token account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// This takes the text from your AI and turns it into real data\nconst rawText = $json.text.replace(/```json|```/g, \"\").trim();\nreturn JSON.parse(rawText);"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -544,
+        -256
+      ],
+      "id": "89015242-a09c-4892-b3ce-e30afdc3ac0b",
+      "name": "Format AI Response"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "dad071ef-dd73-40d0-bb7d-fca5c99e06db",
+              "leftValue": "={{ $('Format AI Response').item.json.status }}",
+              "rightValue": "Shortlisted",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        -432,
+        -16
+      ],
+      "id": "da942f29-cca5-4ff1-85bc-3424fb54c2b9",
+      "name": "Check Matching Score"
+    },
+    {
+      "parameters": {
+        "amount": 2
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        -224,
+        -112
+      ],
+      "id": "4edf6171-c70a-43c0-b00e-b82a873ca0dd",
+      "name": "Delay Acceptance Email",
+      "webhookId": "400d832c-6c21-4e15-9b9f-ec53a4c5a416"
+    },
+    {
+      "parameters": {
+        "amount": 2
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        -224,
+        48
+      ],
+      "id": "9e8936f6-4ae4-4fad-aa1c-3e97eb8ada01",
+      "name": "Delay Rejection Email",
+      "webhookId": "400d832c-6c21-4e15-9b9f-ec53a4c5a416"
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $('Log Application to Airtable').item.json.fields.Email }}",
+        "subject": "Regarding your application for the role described",
+        "message": "=<p>Hi {{ $json.fields.Name }},<b> </b>,</p>\n\n<p>Great news! Our team reviewed your resume and we are impressed with your background. We'd like to schedule a call to discuss the role further.</p>\n\n<p>Best,<br>\n<b>The Recruitment Team</b></p>",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        -80,
+        -224
+      ],
+      "id": "1e982f79-784e-461f-b7f1-93f3a233962b",
+      "name": "Send Interview Invite",
+      "webhookId": "bf13b93f-b984-4749-93df-91448b4966b4",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "9sUTeKyMXH7qj26g",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $('Load Job Requirements').item.json.Name }}",
+        "subject": "Regarding your application for the role described",
+        "message": "=<p>Hi {{ $('Log Application to Airtable').item.json.fields.Name }},</p>\n\n<p>Thank you for your interest. After review, we have decided to move forward with other candidates at this time.</p>\n\n<p><b>Feedback:</b> {{ $node[\"Format AI Response\"].json[\"reason\"] }}</p>\n\n<p>Best regards,<br>\nThe Recruitment Team</p>",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        -64,
+        -16
+      ],
+      "id": "7d00c8a8-df70-464c-af02-f9d7584f131e",
+      "name": "Send Polite Feedback",
+      "webhookId": "6599b5c8-750c-44df-b8f5-c83af72ff638",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "9sUTeKyMXH7qj26g",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "modelName": "models/gemini-2.5-flash",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1.1,
+      "position": [
+        -832,
+        -48
+      ],
+      "id": "abb26ee4-1bfc-4d31-a841-fbaf8024602d",
+      "name": "Gemini Chat Model",
+      "notesInFlow": false,
+      "credentials": {
+        "googlePalmApi": {
+          "id": "72C60VDot1qe5MAR",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Basic LLM Chain": {
+      "main": [
+        [
+          {
+            "node": "Format AI Response",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Candidate Submission Trigger": {
+      "main": [
+        [
+          {
+            "node": "Load Job Requirements",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Load Job Requirements": {
+      "main": [
+        [
+          {
+            "node": "Parse PDF Resume",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Parse PDF Resume": {
+      "main": [
+        [
+          {
+            "node": "Basic LLM Chain",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Log Application to Airtable": {
+      "main": [
+        [
+          {
+            "node": "Check Matching Score",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Format AI Response": {
+      "main": [
+        [
+          {
+            "node": "Log Application to Airtable",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check Matching Score": {
+      "main": [
+        [
+          {
+            "node": "Delay Acceptance Email",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Delay Rejection Email",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Delay Acceptance Email": {
+      "main": [
+        [
+          {
+            "node": "Send Interview Invite",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Delay Rejection Email": {
+      "main": [
+        [
+          {
+            "node": "Send Polite Feedback",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send Interview Invite": {
+      "main": [
+        []
+      ]
+    },
+    "Gemini Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Basic LLM Chain",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "70bac0b1-152a-41b2-942f-23d1c501310d",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "78c922fbb66ae939b60a5fa6225f7be9fcea770c2bf79b04b849001f7d730634"
+  },
+  "id": "vPT8SljAV8GK7yya",
+  "tags": []
+}
