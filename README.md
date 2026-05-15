@@ -14,7 +14,7 @@ This project is an end-to-end autonomous screening system built with **n8n** and
 3.  **Airtable Setup:** Create a table with these exact fields: `Name`, `Email`, `Job Description`, `Resume Text`, `AI Score`, `Status`, and `Reason`.
 4.  **Activate:** Toggle the workflow to **Active** to begin real-time processing.
 
-## 📄 Full Documentation
+##  Full Documentation
 For a deep dive into the system architecture and technical implementation, please refer to the technical report:
 
 **[Workflow Documentation](./AI-Recruitment.pdf)**
