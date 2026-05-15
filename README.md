@@ -17,4 +17,4 @@ This project is an end-to-end autonomous screening system built with **n8n** and
 ## 📄 Full Documentation
 For a deep dive into the system architecture and technical implementation, please refer to the technical report:
 
-**[View Technical Project Report (PDF)](./AI-Recruitment.pdf)**
+**[Workflow Documentation](./AI-Recruitment.pdf)**
